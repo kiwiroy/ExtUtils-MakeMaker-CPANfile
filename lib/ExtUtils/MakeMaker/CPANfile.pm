@@ -11,6 +11,7 @@ our $VERSION = "0.09";
 
 sub import {
   my $class = shift;
+  my @ident = @_;
   my $orig = \&ExtUtils::MakeMaker::WriteMakefile;
   my $writer = sub {
     my %params = @_;
@@ -20,7 +21,7 @@ sub import {
     (my $root = rel2abs($file)) =~ s/Makefile\.PL$//i or return;
 
     if (my $file = eval { Module::CPANfile->load(catfile($root, "cpanfile")) }) {
-      my $prereqs = $file->prereqs;
+      my $prereqs = $file->prereqs_with(@ident);
 
       # Runtime requires => PREREQ_PM
       _merge(
